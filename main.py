@@ -1,8 +1,7 @@
 import os
+
 import openai
 from dotenv import load_dotenv, find_dotenv
-
-
 
 
 def chat_gpt(prompt):
