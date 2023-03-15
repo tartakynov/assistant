@@ -3,6 +3,7 @@ import os
 import openai
 from dotenv import load_dotenv, find_dotenv
 
+# the funny part is that this bot is written by ChatGPT
 
 def chat_gpt(prompt):
     response = openai.Completion.create(
