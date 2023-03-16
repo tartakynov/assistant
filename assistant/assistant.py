@@ -1,11 +1,16 @@
 import argparse
-import os
 import sqlite3
 
 from dotenv import load_dotenv, find_dotenv
 
 from .chat import start_chat
 from .database import list_conversations, remove_conversation, create_tables
+
+
+def read_init_prompt(file_path):
+    with open(file_path, 'r') as file:
+        prompt = file.read()
+    return prompt
 
 
 def main():
@@ -28,8 +33,9 @@ def main():
             else:
                 print(f"Conversation '{args.remove}' not found")
         elif args.start:
+            init_prompt = read_init_prompt('init_prompt.txt')
             try:
-                start_chat(conn, args.start)
+                start_chat(conn, args.start, init_prompt)
             except KeyboardInterrupt:
                 print("\nExiting gracefully...")
         else:

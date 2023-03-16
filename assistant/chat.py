@@ -2,12 +2,15 @@ import os
 
 import openai
 from rich.console import Console
+from rich.markdown import Markdown
+
+import cursor
 from rich.text import Text
 
 from .database import insert_message, load_conversation_history, create_conversation
 
 
-def start_chat(conn, conversation_name):
+def start_chat(conn, conversation_name, init_prompt):
     openai.api_key = os.environ["OPENAI_API_KEY"]
     conversation_id = create_conversation(conn, conversation_name)
     messages = load_conversation_history(conn, conversation_id)
@@ -16,13 +19,18 @@ def start_chat(conn, conversation_name):
         print(f"Loaded an existing conversation with {len(messages)} messages")
     else:
         print("Started an empty conversation")
-    print()
+        messages.append({
+            "role": "user",
+            "content": init_prompt
+        })
 
+    cursor.show()
     console = Console()
 
     console.print(Text.from_markup("\n" * console.height), end="", soft_wrap=True)
     while True:
-        text_from_user = input("User: ")
+        text_from_user = input("\nUser: ")
+        print()
         messages.append({
             "role": "user",
             "content": text_from_user
@@ -38,7 +46,6 @@ def start_chat(conn, conversation_name):
 
         role = None
         delta_contents = []
-
         for chunk in response:
             role = role or chunk.choices[0].delta.get("role")
             delta_content = chunk.choices[0].delta.get("content")
@@ -57,5 +64,5 @@ def start_chat(conn, conversation_name):
         })
         insert_message(conn, conversation_id, role, reply)
 
-        console.print(reply, soft_wrap=True)
+        console.print(Markdown(reply), soft_wrap=True)
         console.file.flush()

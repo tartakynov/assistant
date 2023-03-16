@@ -7,6 +7,7 @@ setup(
     install_requires=[
         "openai",
         "python-dotenv",
+        "cursor",
         "rich"
     ],
     entry_points={
