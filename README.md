@@ -3,6 +3,9 @@
 This is a simple command-line tool for managing chat conversations using SQLite and the OpenAI ChatGPT chat model. The
 tool allows you to create, list, remove, and interact with different conversations stored in a single SQLite database.
 
+[video.webm](https://user-images.githubusercontent.com/946309/225623827-f1031c0e-bc60-4ccf-9ae0-b78d6c47aae9.webm)
+
+
 ### Installation
 
 #### Prerequisites
