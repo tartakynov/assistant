@@ -1,7 +1,8 @@
 import os
-from sys import stdout
 
 import openai
+from rich.console import Console
+from rich.text import Text
 
 from .database import insert_message, load_conversation_history, create_conversation
 
@@ -16,6 +17,8 @@ def start_chat(conn, conversation_name):
     else:
         print("Started an empty conversation")
     print()
+
+    console = Console()
 
     while True:
         text_from_user = input("User: ")
@@ -35,14 +38,15 @@ def start_chat(conn, conversation_name):
         role = None
         delta_contents = []
 
-        stdout.write("ChatGPT: ")
         for chunk in response:
             role = role or chunk.choices[0].delta.get("role")
             delta_content = chunk.choices[0].delta.get("content")
             if delta_content:
-                stdout.write(delta_content)
+                console.print(delta_content, end="", soft_wrap=True)
                 delta_contents.append(delta_content)
-        stdout.write("\n")
+                console.file.flush()
+
+        console.print(Text.from_markup("\n" * console.height), end="", soft_wrap=True)
 
         reply = "".join(delta_contents)
         messages.append({
@@ -50,3 +54,6 @@ def start_chat(conn, conversation_name):
             "content": reply
         })
         insert_message(conn, conversation_id, role, reply)
+
+        console.print(reply, soft_wrap=True)
+        console.file.flush()

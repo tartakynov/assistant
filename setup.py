@@ -6,7 +6,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         "openai",
-        "python-dotenv"
+        "python-dotenv",
+        "cursor",
+        "rich"
     ],
     entry_points={
         "console_scripts": [
