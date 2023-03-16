@@ -1,10 +1,9 @@
 import os
 
+import cursor
 import openai
 from rich.console import Console
 from rich.markdown import Markdown
-
-import cursor
 from rich.text import Text
 
 from .database import insert_message, load_conversation_history, create_conversation
@@ -46,6 +45,7 @@ def start_chat(conn, conversation_name, init_prompt):
 
         role = None
         delta_contents = []
+
         for chunk in response:
             role = role or chunk.choices[0].delta.get("role")
             delta_content = chunk.choices[0].delta.get("content")

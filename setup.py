@@ -8,6 +8,7 @@ setup(
         "openai",
         "python-dotenv",
         "cursor",
+        "ansi-escapes",
         "rich"
     ],
     entry_points={
