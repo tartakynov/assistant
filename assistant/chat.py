@@ -20,6 +20,7 @@ def start_chat(conn, conversation_name):
 
     console = Console()
 
+    console.print(Text.from_markup("\n" * console.height), end="", soft_wrap=True)
     while True:
         text_from_user = input("User: ")
         messages.append({
@@ -46,6 +47,7 @@ def start_chat(conn, conversation_name):
                 delta_contents.append(delta_content)
                 console.file.flush()
 
+        console.clear()
         console.print(Text.from_markup("\n" * console.height), end="", soft_wrap=True)
 
         reply = "".join(delta_contents)
