@@ -37,7 +37,7 @@ def main():
             try:
                 start_chat(conn, args.start, init_prompt)
             except KeyboardInterrupt:
-                print("\nExiting gracefully...")
+                print("\nBye...")
         else:
             print("No action specified. Use -h or --help for available options.")
 
