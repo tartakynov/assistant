@@ -2,11 +2,16 @@ import os
 
 import cursor
 import openai
+from prompt_toolkit import PromptSession
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from rich.console import Console
-from rich.markdown import Markdown
 from rich.text import Text
 
 from .database import insert_message, load_conversation_history, create_conversation
+
+
+def prompt_continuation(width, line_number, is_soft_wrap):
+    return '> '
 
 
 def start_chat(conn, conversation_name, init_prompt):
@@ -14,22 +19,20 @@ def start_chat(conn, conversation_name, init_prompt):
     conversation_id = create_conversation(conn, conversation_name)
     messages = load_conversation_history(conn, conversation_id)
 
-    if messages:
-        print(f"Loaded an existing conversation with {len(messages)} messages")
-    else:
-        print("Started an empty conversation")
-        messages.append({
-            "role": "user",
-            "content": init_prompt
-        })
-
     cursor.show()
     console = Console()
-
     console.print(Text.from_markup("\n" * console.height), end="", soft_wrap=True)
+    print("ESC+Enter to send")
+
+    prompt_session = PromptSession()
     while True:
-        text_from_user = input("\nUser: ")
+        text_from_user = prompt_session.prompt('\n> ',
+                                               multiline=True,
+                                               prompt_continuation=prompt_continuation,
+                                               auto_suggest=AutoSuggestFromHistory()
+                                               )
         print()
+
         messages.append({
             "role": "user",
             "content": text_from_user
@@ -53,9 +56,7 @@ def start_chat(conn, conversation_name, init_prompt):
                 console.print(delta_content, end="", soft_wrap=True)
                 delta_contents.append(delta_content)
                 console.file.flush()
-
-        console.clear()
-        console.print(Text.from_markup("\n" * console.height), end="", soft_wrap=True)
+        print()
 
         reply = "".join(delta_contents)
         messages.append({
@@ -63,6 +64,3 @@ def start_chat(conn, conversation_name, init_prompt):
             "content": reply
         })
         insert_message(conn, conversation_id, role, reply)
-
-        console.print(Markdown(reply), soft_wrap=True)
-        console.file.flush()
