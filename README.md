@@ -12,6 +12,12 @@ tool allows you to create, list, remove, and interact with different conversatio
 
 #### Setup
 
+To activate virtualenv if not already:
+```bash
+python -m venv env
+source env/bin/activate
+```
+
 Before using the script, you need to install it as a package using pip:
 
 Navigate to the project directory and run:
